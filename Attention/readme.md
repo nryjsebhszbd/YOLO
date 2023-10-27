@@ -1,5 +1,5 @@
-# CV-Attention
-关于CV的一些经典注意力机制代码。  
+# Attention
+一些经典注意力机制代码。  
 目前代码格式主要用于yolov3,yolov5,yolov7,yolov8.
 
 # Supports
