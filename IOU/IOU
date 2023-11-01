@@ -1,0 +1,17 @@
+def IoU(bbox, prebox):
+'''
+bbox:真实框，坐标为(左下角坐标，右上交坐标)，即(x_min1, y_min1, x_max1, y_max1)
+prebox:预测框，坐标为(左下角坐标，右上交坐标)，即(x_min2, y_min2, x_max2, y_max2)
+'''
+#计算交集部分左下角坐标x_l, y_l,右上角坐标x_r，y_r
+x_l = max(bbox[0], prebox[0])
+y_l = max(bbox[1], prebox[1])
+x_r = min(bbox[2], prebox[2])
+y_r = min(bbox[3], prebox[3])
+
+bbox_area = (x_max1 - x_min1) * (y_max1 - y_min1) #真实框面积
+prebox_area = (x_max2 - x_min2) * (y_max2 - y_min2) #预测框面积
+inter_area = max(0, x_r - x_l) * max(0, y_r - y_l) #交集部分面积
+
+iou = inter_area / (bbox_area + prebox_area - inter_area + 1e-6) #计算iou，其中1e-6为了防止分母为0
+return iou
