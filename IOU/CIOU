@@ -1,0 +1,36 @@
+def CIoU(bbox, prebox):
+'''
+bbox:真实框，坐标为(左下角坐标，右上交坐标)，即(x_min1, y_min1, x_max1, y_max1)
+prebox:预测框，坐标为(左下角坐标，右上交坐标)，即(x_min2, y_min2, x_max2, y_max2)
+'''
+#计算交集部分左下角坐标x_l, y_l,右上角坐标x_r，y_r
+x_l = max(bbox[0], prebox[0])
+y_l = max(bbox[1], prebox[1])
+x_r = min(bbox[2], prebox[2])
+y_r = min(bbox[3], prebox[3])
+
+#计算最小外接矩形左下角坐标c_xl, c_yl,右上角坐标c_xr, c_yr
+c_xl = min(bbox[0], prebox[0])
+c_yl = min(bbox[1], prebox[1])
+c_xr = max(bbox[2], prebox[2])
+c_yr = max(bbox[3], prebox[3])
+
+bbox_area = (x_max1 - x_min1) * (y_max1 - y_min1) #真实框面积
+prebox_area = (x_max2 - x_min2) * (y_max2 - y_min2) #预测框面积
+inter_area = max(0, x_r - x_l) * max(0, y_r - y_l) #交集部分面积
+
+iou = inter_area / (bbox_area + prebox_area - inter_area + 1e-6) #计算iou，其中1e-6为了防止分母为0
+
+#计算真实框的中心坐标b_x, b_y，预测框的中心坐标p_x, p_y
+p_x = (x_min2 + x_max2) / 2
+p_y = (y_min2 + y_max2) / 2
+b_x = (x_min1 + x_max1) / 2
+b_y = (y_min1 + y_max1) / 2
+
+c = (c_xr - c_xl) ** 2 + (c_yr - c_yl) ** 2 #对角线距离c
+d = (p_x - b_x) ** 2 + (p_y - b_y) ** 2 #中心距离d
+
+v = 4 * (math.atan((x_max1 - x_min1) / (y_max1 - y_min1)) - math.atan((x_max2 - x_min2) / (y_max2 - y_min2))) ** 2 / (math.pi ** 2) #计算长宽比因子
+
+ciou = iou - d / c - v ** 2 / (1 - iou + v)#计算ciou
+return ciou
